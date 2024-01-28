@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="result.css" />
+    <title>Result</title>
+</head>
+
+<body>
+    <nav>
+        <div class="nav__logo">MEDsarthi</div>
+        <ul class="nav__links">
+            <li class="link"><a href="#">Home</a></li>
+            <li class="link"><a href="#">About Us</a></li>
+            <li class="link"><a href="#">AI Trainer</a></li>
+            <li class="link"><a href="#">Pages</a></li>
+            <li class="link"><a href="#">Blog</a></li>
+            <li class="link"><a href="#">Contact</a></li>
+        </ul>
+        <button class="onboarding-btn" onclick="speakText">Replay Audio</button>
+    </nav>
+    <div class="output">
+        <div class="gif">
+            <img src="wave.gif">
+        </div>
+        <div class="info">
+        </div>
+        <a href="walkthrough.html"><button id="retry" class="onboarding-btn">Retry</button></a>
+    </div>
+
+
+    <script>
+
+        function speakText(text) {
+            // Create a new SpeechSynthesisUtterance object with the text to be spoken
+            var utterance = new SpeechSynthesisUtterance(text);
+
+            // Optionally, you can configure additional properties of the utterance object
+            utterance.lang = 'en-US'; // Set the language (if not specified, it defaults to the user's browser settings)
+
+            window.speechSynthesis.speak(utterance);
+        }
+        // Retrieve data from sessionStorage
+        const storedApiResponse = sessionStorage.getItem('apiResponse');
+        console.log(storedApiResponse);
+        if (storedApiResponse) {
+            // Parse the stored JSON data
+            const parsedResult = JSON.parse(storedApiResponse);
+
+            const apiResponse = JSON.stringify(parsedResult, null, 2);
+
+            if (parsedResult.Medicine) {
+                const medicine_name = parsedResult.Medicine;
+                const use_case = parsedResult['Use cases'];
+                const effects = parsedResult.effects;
+
+
+                speakText(medicine_name);
+                speakText(use_case);
+                speakText(effects);
+                // Access and display the data in the desired element (e.g., .info)
+                var infoString = `Medicine Name: ${medicine_name}\nUse Cases: ${use_case}\nEffects: ${effects}`;
+
+                const infoDiv = document.querySelector('.info');
+                if (infoDiv) {
+                    // Append the string to the infoDiv
+                    infoDiv.innerText = infoString;
+                }
+            }
+            else{
+                const undefine = parsedResult['Not Found']
+                var infoString = `Medicine Not Found: ${undefine}`;
+                speakText('Medicine not found, please scan you medicine again ');
+
+                const infoDiv = document.querySelector('.info');
+                if (infoDiv) {
+                    // Append the string to the infoDiv
+                    infoDiv.innerText = infoString;
+                }
+            }
+                // Access and display the data in the desired element (e.g., .info)
+        }
+
+
+    </script>
+
+
+    <script src="walkthrough.js"></script>
+</body>
+
+</html>

@@ -28,9 +28,9 @@ const init = () => {
 };
 
 // Trigger the onboarding process when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    init();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     init();
+// });
 
 onboardingBtn.addEventListener("click", () => {
     init();
@@ -76,78 +76,80 @@ nextBtn.addEventListener("click", () => {
 
 
 // Select elemetns
-const video = document.querySelector('video');
-const picture = document.querySelector('.shot');
+const video = document.querySelector('.video');
+const captureButton = document.getElementById('capture');
 
-// Navigator video stream
-async function videoStream (){
-    try{
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video:true,
-            audio:false
-        });
-        // Set video source
-        video.srcObject = stream;
+async function sendImageToAPI(base64Image) {
+    try {
 
-        //Take a picture on K press
-        document.addEventListener('keypress', e =>{
-            // console.log(e.code);
-            if(e.code !== 'KeyK') return;
-            // Create a Canvas
-            const canvas = document.createElement('canvas');
-            // Set canvas width and height
-            canvas.width = video.width;
-            canvas.height = video.height;
-            // Draw a new image
-            canvas.getContext('2d').drawImage(video, 0,0, video.width, video.height);
-            // Take a shot
-            let img = canvas.toDataURL('image/png').replace('image/png', 1.0);
-            // Set Image src
-            picture.src = img;
-            // Define the URL of the API
-            
-            const apiUrl = 'http://192.168.1.10:8080/predict';
+        const apiUrl = 'https://testing-5wz7dep6ya-uc.a.run.app/predict';
 
-            // Create a FormData object and append your form data to it
-            const formData = new FormData();
-            formData.append('image', img);
-            // Add more form data as needed
-
-            // Define the options for the fetch request
-            const requestOptions = {
+        const response = await fetch(apiUrl, {
             method: 'POST',
-            body: formData  // Pass the FormData object as the body
-            };
-
-            // Make the POST request
-            fetch(apiUrl, requestOptions)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json(); // Assuming the response is JSON
-            })
-            .then(data => {
-                // Handle the JSON response data
-                console.log(data);
-            })
-            .catch(error => {
-                // Handle errors
-                console.error('There was a problem with the fetch operation:', error);
-            });
-            // Save image file
-            const anchorTag = document.createElement('a');
-            anchorTag.href = img;
-            // anchorTag.download = 'my-image.png';
-            document.body.appendChild(anchorTag);
-            anchorTag.click();
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: base64Image }),
         });
 
-    }catch(err){
-        console.log(err);
+        if (response.ok) {
+            const result = await response.json();
+            console.log('API Response:', result);
+
+            sessionStorage.setItem('apiResponse', JSON.stringify(result));
+            
+            // Log specific information from the API response, adjust accordingly
+            if (result && result.uses) {
+                console.log('Predictions:', result.predictions);
+            }
+        } else {
+            console.error('Error:', response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
+// Navigator video stream
+async function videoStream() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+        });
+
+        // Set video source
+        video.srcObject = stream;
+
+        // Take a picture on button click
+        captureButton.addEventListener('click', async () => {
+            // Create a Canvas
+            // Save data
+            cam.style.display = 'none';
+            const canvas = document.createElement('canvas');
+            // Set canvas width and height
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            // Draw a new image
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Take a shot
+            const img = canvas.toDataURL('image/png');
+            // Log base64 string
+            console.log('Base64 Image:', img);
+            
+            // Send the base64 image to the API
+            await sendImageToAPI(img);
+            console.log('redirecting to results page');
+
+            window.location.href = 'result.html';
+            
+    
+            // Retrieve da
+        });
+    } catch (err) {
+        console.error('Error:', err);
+    }
+}
 
 // Run function
 videoStream();
