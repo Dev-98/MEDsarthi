@@ -87,8 +87,7 @@
           <div class="content">
             <h3>New here ?</h3>
             <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
-              ex ratione. Aliquid!
+              We offer a user-friendly personal pill identifier feature, providing quick and accurate medication identification based on pill characteristics. With robust assurance measures in place, including secure data handling and reliable information sourcing, users can trust our platform for safe and seamless medication management. Aliquid!
             </p>
             <button class="btn transparent" id="sign-up-btn">
               Sign up
@@ -114,34 +113,42 @@
     <script>
       const Form = document.querySelector('.sign-in-form')
 
-      Form.addEventListener('submit', event => {
+      Form.addEventListener('submit', async event => {
         event.preventDefault();
         const formData =  new FormData(Form);
         const data = Object.fromEntries(formData);
 
         console.log('Sign-in data:', data )
         
-        console.log(typeof( data ))
+        // console.log(typeof( data ))
+        try {
 
-        fetch('https://login-github.onrender.com/authenticate' , {
-          method: 'POST',
-          headers : {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data),
-        }) .then(res => res.json())
-          .then(ans => console.log(ans)) 
-          .catch(error => console.error(error));
+          const response = await fetch('https://login-github.onrender.com/authenticate' , {
+            method: 'POST',
+            headers : {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+          }) 
+          if (response.ok) {
+              const result = await response.json();
+              console.log(result.ans)
+              if (result.ans) {
+                  window.location.href = 'hero.html';
+              } else {
+                  alert("Invalid username or password");
+              }
 
-          const loginout = JSON.parse(ans)
-          if (loginout.ans === "true") {
-            window.location.href('hero.html') 
-          };
-        });
-
+          }else {
+            console.error('Error:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+    }
+});
       const signupForm = document.querySelector('.sign-up-form');
 
-      signupForm.addEventListener('submit', event => {
+      signupForm.addEventListener('submit', async event => {
           event.preventDefault();
 
           const upformData = new FormData(signupForm);
