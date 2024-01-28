@@ -50,6 +50,7 @@ nav {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+   
 }
 
 .nav__logo {
@@ -59,6 +60,10 @@ nav {
 }
 
 .nav__links {
+    background: rgba(247, 246, 246, 0.562);
+    border-radius: 2rem;
+    z-index: -1;
+    padding: 20px 20px 20px 20px;
     list-style: none;
     display: flex;
     align-items: center;
