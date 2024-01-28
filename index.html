@@ -130,9 +130,14 @@
           },
           body: JSON.stringify(data),
         }) .then(res => res.json())
-          .then(data => console.log(data)) 
+          .then(ans => console.log(ans)) 
           .catch(error => console.error(error));
-      });
+
+          const loginout = JSON.parse(ans)
+          if (loginout.ans === "true") {
+            window.location.href('hero.html') 
+          };
+        });
 
       const signupForm = document.querySelector('.sign-up-form');
 

@@ -104,10 +104,41 @@ async function videoStream (){
             let img = canvas.toDataURL('image/png').replace('image/png', 1.0);
             // Set Image src
             picture.src = img;
+            // Define the URL of the API
+            
+            const apiUrl = 'http://192.168.1.10:8080/predict';
+
+            // Create a FormData object and append your form data to it
+            const formData = new FormData();
+            formData.append('image', img);
+            // Add more form data as needed
+
+            // Define the options for the fetch request
+            const requestOptions = {
+            method: 'POST',
+            body: formData  // Pass the FormData object as the body
+            };
+
+            // Make the POST request
+            fetch(apiUrl, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json(); // Assuming the response is JSON
+            })
+            .then(data => {
+                // Handle the JSON response data
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
             // Save image file
             const anchorTag = document.createElement('a');
             anchorTag.href = img;
-            anchorTag.download = 'my-image.png';
+            // anchorTag.download = 'my-image.png';
             document.body.appendChild(anchorTag);
             anchorTag.click();
         });
@@ -116,5 +147,7 @@ async function videoStream (){
         console.log(err);
     }
 }
+
+
 // Run function
 videoStream();
