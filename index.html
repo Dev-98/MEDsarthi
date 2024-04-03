@@ -111,41 +111,15 @@
       </div>
     </div>
     <script>
-      const Form = document.querySelector('.sign-in-form')
+       const Form = document.querySelector('.sign-in-form')
 
-      Form.addEventListener('submit', async event => {
-        event.preventDefault();
-        const formData =  new FormData(Form);
-        const data = Object.fromEntries(formData);
+  Form.addEventListener('submit', async event => {
+    event.preventDefault();
 
-        console.log('Sign-in data:', data )
-        
-        // console.log(typeof( data ))
-        try {
+    // Redirect to the desired page
+    window.location.href = 'hero.html';
+  });
 
-          const response = await fetch('https://login-github.onrender.com/authenticate' , {
-            method: 'POST',
-            headers : {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-          }) 
-          if (response.ok) {
-              const result = await response.json();
-              console.log(result.ans)
-              if (result.ans) {
-                  window.location.href = 'hero.html';
-              } else {
-                  alert("Invalid username or password");
-              }
-
-          }else {
-            console.error('Error:', response.status, response.statusText);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-    }
-});
       const signupForm = document.querySelector('.sign-up-form');
 
       signupForm.addEventListener('submit', async event => {
